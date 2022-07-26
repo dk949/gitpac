@@ -1,0 +1,12 @@
+{
+	"name": "gitpac",
+	"description": "Manage software installed compiled from source",
+	"authors": [
+		"dk949"
+	],
+	"copyright": "Copyright © 2022, dk949",
+	"dependencies": {
+		"dyaml": "~>0.9.0"
+	},
+	"license": "MIT"
+}

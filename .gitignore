@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/gitpac
+gitpac.so
+gitpac.dylib
+gitpac.dll
+gitpac.a
+gitpac.lib
+gitpac-test-*
+*.exe
+*.o
+*.obj
+*.lst
