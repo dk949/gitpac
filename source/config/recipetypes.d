@@ -3,7 +3,10 @@ module config.recipetypes;
 import url;
 import std.sumtype;
 
-alias Remote = Url[];
+struct Remote{
+    Url[] urls;
+    alias urls this;
+}
 
 struct Deps {
     string[] build;
