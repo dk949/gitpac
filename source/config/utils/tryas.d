@@ -35,7 +35,7 @@ string tryAs(T : string)(Node n) {
             || n.type == NodeType.integer
             || n.type == NodeType.decimal
             || n.type == NodeType.timestamp,
-            n.type.str ~ " is not convertible to a string"
+            n.type.text ~ " is not convertible to a string"
     );
     return n.as!string;
 }
@@ -43,7 +43,7 @@ string tryAs(T : string)(Node n) {
 bool tryAs(T : bool)(Node n) {
     enforce!TryAsException(
         n.type == NodeType.boolean,
-        n.type.str ~ " is not a boolean"
+        n.type.text ~ " is not a boolean"
     );
     return n.as!bool;
 }
@@ -52,7 +52,7 @@ T tryAs(T)(Node n)
 if (isIntegral!T) {
     enforce!TryAsException(
         n.type == NodeType.integer,
-        n.type.str ~ " is not an integer"
+        n.type.text ~ " is not an integer"
     );
     return n.as!T;
 }
@@ -61,15 +61,14 @@ T tryAs(T)(Node n)
 if (isFloatingPoint!T) {
     enforce!TryAsException(
         n.type == NodeType.decimal,
-        n.type.str ~ " is not a decimal"
+        n.type.text ~ " is not a decimal"
     );
     return n.as!T;
 }
 
 T tryAs(T)(Node n)
 if (isArray!T) {
-
-    enforce!TryAsException(n.type == NodeType.sequence, "input is not a sequence");
+    enforce!TryAsException(n.type == NodeType.sequence, n.type.text ~ " is not a sequence");
     import std.range;
 
     alias Elem = typeof(declval!T.front);
@@ -82,12 +81,26 @@ if (isArray!T) {
     return a.data;
 }
 
+T tryAs(T)(Node n)
+if (isAssociativeArray!T) {
+    import std.range;
+
+    enforce!TryAsException(n.type == NodeType.mapping, n.type.text ~ " is not a mapping");
+    alias Key = typeof(declval!T.keys.front);
+    alias Value = typeof(declval!T.values.front);
+    Key[Value] output;
+    foreach (Node key, Node value; n) {
+        output[key.tryAs!Key] = value.tryAs!Value;
+    }
+    return output;
+}
+
 import config.recipetypes;
 
 Deps tryAs(T : Deps)(Node n) {
     enforce!TryAsException(
         n.type == NodeType.mapping,
-        n.type.str ~ " is not a mapping of dependencies"
+        n.type.text ~ " is not a mapping of dependencies"
     );
     auto deps = Deps();
     foreach (string key, Node value; n) {
@@ -117,12 +130,12 @@ remote:
  */
 Remote tryAs(T : Remote)(Node n) {
     if (n.type == NodeType.null_)
-        return [Url(DefaultUrl.None)];
+        return Remote([Url(DefaultUrl.None)]);
 
     if (n.type == NodeType.mapping) {
         import std.array;
 
-        auto a = appender!(Remote);
+        auto a = appender!(Url[]);
         foreach (string t, Node node; n) {
             enforce!TryAsException(
                 node.type == NodeType.string,
@@ -142,14 +155,17 @@ Remote tryAs(T : Remote)(Node n) {
                     exitWithError("Unknown url type `", t, "`. Tyr one of `git`, `http` or `ftp`");
             }
         }
-        return a.data;
+        return Remote(a.data);
     }
 
     enforce!TryAsException(
         n.type == NodeType.string,
-        n.type.str ~ " is not a string or null"
+        n.type.text ~ " is not a string or null"
     );
-    return [Url(n.as!string)];
+    return Remote([Url(n.as!string)]);
 }
 
-private alias str = to!string;
+Url tryAs(T : Url)(Node n) {
+    enforce!TryAsException(n.type == NodeType.string, n.type.text ~ " is not a string");
+    return Url(n.as!string);
+}
