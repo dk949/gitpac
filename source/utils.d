@@ -12,7 +12,6 @@ module utils;
  *   name = name of property
  */
 mixin template propGet(alias T, string name) {
-    import std.traits;
 
     mixin("private " ~ T.stringof ~ " m_" ~ name ~ ";");
 
@@ -78,13 +77,26 @@ auto ref T tryOrElse(E, T, Fn)(lazy T t, auto ref Fn o) //if (is(typeof(o(declva
         return o(e);
 }
 
+// This is a temporary solution.
+debug {
+    @noreturn
+    noreturn exitWithError(Args...)(auto ref Args args)
+    if (!is(Args[0] : Exception)) {
+        import std.stdio;
+        import core.stdc.stdlib: exit;
+
+        stderr.writeln(args);
+        exit(1);
+    }
+}
+
 @noreturn
-noreturn exitWithError(Args...)(auto ref Args args) {
+noreturn exitWithError(E : Exception, Args...)(E err, auto ref Args args) {
     import std.stdio;
     import core.stdc.stdlib: exit;
 
     stderr.writeln(args);
-    exit(1);
+    throw err;
 }
 
 /// Works like C++ std::declval.
@@ -112,4 +124,15 @@ auto constCastSwitch(choices...)(const Object obj) {
     import std.algorithm;
 
     return castSwitch!(choices)(cast(Object) obj);
+}
+
+template ident(T) {
+    T delegate(T) ident = (T t) => t;
+}
+
+import std.sumtype;
+
+ref auto get(T, S)(auto ref S from)
+if (isSumType!(S)) {
+    return from.tryMatch!(ident!T);
 }
