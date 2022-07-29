@@ -2,8 +2,9 @@ module args.clonecmd;
 
 import args.utils: getpos, genericHelp;
 import args;
-import utils: propGet, monadof, tryOrElse;
 import std.getopt;
+import url;
+import utils: propGet, monadof, tryOrElse;
 
 class CloneCmd : Subcommand {
     import std.sumtype;
@@ -14,7 +15,7 @@ class CloneCmd : Subcommand {
     alias Dir = SumType!(Store, string);
 
     mixin propGet!(bool, "noRecurse");
-    mixin propGet!(string, "url");
+    mixin propGet!(Url, "url");
     mixin propGet!(string, "alias_");
     mixin propGet!(Dir, "dir");
 
