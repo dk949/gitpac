@@ -10,11 +10,13 @@ class Recipe : BaseConfig {
     import std.traits;
     import std.stdio;
 
+    string name;
     Remote remote;
     string[] build;
     string[] clean;
     string[] install;
     Deps deps;
+    string[string] env;
     string[] diff;
 
     mixin makeFromYaml!Recipe;
@@ -28,15 +30,24 @@ class Recipe : BaseConfig {
         if (yaml.type == NodeType.invalid)
             return rec;
 
+        import std.range, std.algorithm;
+
+        rec.name = yaml
+            .startMark
+            .name
+            .retro
+            .findSplitAfter(".")[1]
+            .retro
+            .idup;
         rec.fromYaml(yaml);
         return rec;
     }
 }
 
 struct Recipes {
-    Recipe[] m_recipes;
+    Recipe[] recipes;
 
-    alias m_recipes this;
+    alias recipes this;
 
     static Recipes load() {
         import config.configdir;
@@ -56,5 +67,11 @@ struct Recipes {
             a.put(Recipe.load(ent.name));
 
         return Recipes(a.data);
+    }
+
+    ref inout(Recipe) find(Url url) inout return {
+        foreach(rec; recipes){
+        }
+        return recipes[0];
     }
 }
