@@ -4,12 +4,13 @@ import config.baseconfig;
 import config.configdir;
 import config.utils;
 import dyaml;
+import url;
 
 class UserConfig : BaseConfig {
     int numRetires = 5;
     bool useSSH = false;
     string storeDir;
-    string[] baseUrl = ["https://github.com/"];
+    Url[] baseUrl = [DefaultUrl.Github];
 
     this() {
         storeDir = defaultConfigDir;
