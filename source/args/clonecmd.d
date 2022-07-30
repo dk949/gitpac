@@ -1,13 +1,13 @@
 module args.clonecmd;
 
-import args.utils: getpos, genericHelp;
+import args.utils;
 import args;
 import std.getopt;
+import std.sumtype;
 import url;
-import utils: propGet, monadof, tryOrElse;
+import utils;
 
 class CloneCmd : Subcommand {
-    import std.sumtype;
 
     struct Store {
     }
@@ -34,6 +34,8 @@ By default:
     }
 
     this(ref string[] args) {
+        import std.file;
+        import std.algorithm;
 
         bool store;
 
@@ -49,8 +51,6 @@ By default:
         if (res.helpWanted) {
             help(res.options);
         }
-
-        import std.file: getcwd;
 
         auto pos = getpos!2(args);
         if (!pos[0][0])
@@ -69,8 +69,6 @@ By default:
             else
                 m_dir = getcwd();
         }
-        import std.algorithm: remove;
-        import std.range;
 
         foreach_reverse (size_t rm; pos[1]) {
             args = args.remove(rm);

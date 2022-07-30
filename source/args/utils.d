@@ -1,9 +1,10 @@
 module args.utils;
 
+import std.getopt;
+
 auto getpos(size_t N)(ref string[] args) {
-    import std.range: drop;
+    import std.range, std.algorithm;
     import std.typecons: tuple;
-    import std.algorithm: startsWith;
 
     string[N] pos;
     size_t[] rmList;
@@ -24,12 +25,10 @@ auto getpos(size_t N)(ref string[] args) {
     return tuple(pos, rmList);
 }
 
-import std.getopt;
-
 @noreturn
 noreturn genericHelp(string pre, Option[] options = null, string msg = null) {
-    import std.stdio: stderr, stdout;
     import core.stdc.stdlib: exit;
+    import std.stdio;
 
     if (msg)
         stderr.writeln(msg, '\n');

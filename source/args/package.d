@@ -1,15 +1,16 @@
 module args;
 
+import args.utils;
+import std.getopt;
+import utils;
+
 abstract class Subcommand {
 }
 
 struct Args {
 
-    import std.getopt: Option;
-
     @noreturn
     private noreturn help(Option[] options = null, string msg = null) {
-        import args.utils: genericHelp;
 
         genericHelp("Usage:
     gitpac clone URL
@@ -28,26 +29,26 @@ To get help for a specific subcommand use:
     @noreturn
     private noreturn version_() {
         import core.stdc.stdlib: exit;
-        import std.stdio: writeln;
-        import version_: get;
+        import std.stdio;
+        import version_;
 
-        writeln(get);
+        writeln(version_.get);
         exit(0);
     }
-
-    import utils: propGet;
 
     mixin propGet!(Subcommand, "subcommand");
 
     this(string[] input) {
+
+        import args.clonecmd;
+        import std.functional;
+        import std.range, std.algorithm, std.array;
+        import std.stdio: stderr; // avoid importing remove from stdc
+
         assert(input.length > 0, "expecting first argunment to be the name of the application");
 
         if (input.length <= 1)
             help(null, "Expected a sub command");
-
-        import std.functional: toDelegate;
-        import std.algorithm: remove;
-        import args.clonecmd: CloneCmd;
 
         // Each subcommand is handled by a dedicated handler
         switch (input[1]) {
@@ -62,21 +63,15 @@ To get help for a specific subcommand use:
             case "config":
             case "make":
             case "install":
-                import std.stdio: writeln;
-
-                writeln(input[1], " not implemented");
+                stderr.writeln(input[1], " not implemented");
                 input = input.remove(1);
                 break;
             default:
                 break;
         }
 
-        import std.getopt;
-
         // Remaining arguments are habndled as global flags
         bool ver;
-
-        import utils;
 
         auto res = tryOrElse!(GetOptException)(getopt(
                 input,
@@ -90,9 +85,6 @@ To get help for a specific subcommand use:
         if (ver) {
             version_();
         }
-
-        import std.array: join;
-        import std.range: drop;
 
         if (input.length != 1)
             help(res.options, "Unexpected arguments: " ~ input.drop(1).join(", "));
