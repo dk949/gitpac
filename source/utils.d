@@ -136,3 +136,36 @@ import std.traits, std.stdio;
 
 /// Either a string or a file. Most interfaces either accept both or have overloads for both.
 enum bool isFileLike(F) = isSomeString!F || isFileHandle!F;
+
+debug {
+    ref inout(T) dbg(string msg = "", T)(scope return ref inout(T) inp) {
+        import std.stdio;
+
+        stderr.writeln("[DEBUG] Debug: ", msg, ": ", inp);
+        return inp;
+    }
+
+    inout(T) dbg(string msg = "", T)(inout(T) inp) {
+        import std.stdio;
+
+        stderr.writeln("[DEBUG] Debug: ", msg, ": ", inp);
+        return inp;
+    }
+
+    void dbg(string msg = "")() {
+        import std.stdio;
+
+        stderr.writeln("[DEBUG] Debug: ", msg, ": ", inp);
+    }
+} else {
+    ref inout(T) dbg(string msg = "", T)(return ref inout(T) inp) {
+        return inp;
+    }
+
+    inout(T) dbg(string msg = "", T)(inout(T) inp) {
+        return inp;
+    }
+
+    void dbg(string msg = "")() {
+    }
+}
