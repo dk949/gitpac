@@ -131,3 +131,8 @@ ref auto get(T, S)(auto ref S from)
 if (isSumType!(S)) {
     return from.tryMatch!(ident!T);
 }
+
+import std.traits, std.stdio;
+
+/// Either a string or a file. Most interfaces either accept both or have overloads for both.
+enum bool isFileLike(F) = isSomeString!F || isFileHandle!F;
