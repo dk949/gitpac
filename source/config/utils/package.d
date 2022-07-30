@@ -7,7 +7,7 @@ import utils;
 public import config.utils.tryas;
 
 Node loadYaml(F)(auto ref F file)
-if (isSomeString!F || is(F == File))
+if (isFileLike!F)
 in (exists(file)) {
     auto loader = Loader.fromFile(file);
     if (loader.empty)
