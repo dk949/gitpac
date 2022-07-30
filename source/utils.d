@@ -75,16 +75,14 @@ auto ref T tryOrElse(E, T, Fn)(lazy T t, auto ref Fn o) //if (is(typeof(o(declva
 }
 
 // This is a temporary solution.
-debug {
-    @noreturn
-    noreturn exitWithError(Args...)(auto ref Args args)
-    if (!is(Args[0] : Exception)) {
-        import std.stdio;
-        import core.stdc.stdlib: exit;
+@noreturn
+noreturn exitWithError(Args...)(auto ref Args args)
+if (!is(Args[0] : Exception)) {
+    import std.stdio;
+    import core.stdc.stdlib: exit;
 
-        stderr.writeln(args);
-        exit(1);
-    }
+    stderr.writeln(args);
+    exit(1);
 }
 
 @noreturn
