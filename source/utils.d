@@ -35,24 +35,21 @@ mixin template propGet(alias T, string name) {
     // dfmt on
 }
 
-/**
- * Run an algorythm on a range, if range is null or empty, return null
- *
- * Params:
- *   r = input range for teh algorythm
- *   rest = extrtra arguments to the algorithm
- */
-auto ref monadof(string func, Range, Rest...)(auto ref Range r, auto ref Rest rest)
-if (__traits(compiles, r is null)) {
-    if (r is null)
-        return null;
-    else {
-        static if (__traits(compiles, r.empty))
-            if (r.empty)
-                return null;
-        import std;
+// TODO: rewrite this in terms of Nullable
+version (none) {
+    ref typeof(imported!"std.range".front(declval!Range)) monadof(string func, Range, Rest...)(
+        auto ref Range r, auto ref Rest rest)
+    if (__traits(compiles, r is null)) {
+        if (r is null)
+            return null;
+        else {
+            static if (__traits(compiles, r.empty))
+                if (r.empty)
+                    return null;
+            import std;
 
-        mixin("return " ~ func ~ "(r, rest);");
+            mixin("return " ~ func ~ "(r, rest);");
+        }
     }
 }
 
