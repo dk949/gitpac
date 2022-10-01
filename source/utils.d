@@ -169,3 +169,16 @@ debug {
     void dbg(string msg = "")() {
     }
 }
+
+debug {
+    void dwriteln(Args...)(auto ref Args args) {
+        import std.stdio;
+
+        stderr.writeln("[DEBUG] ", args);
+    }
+} else {
+    void dwriteln(Args...)(auto ref Args) {
+        notImplemented("in release mode");
+    }
+}
+

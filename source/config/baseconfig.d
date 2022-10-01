@@ -19,15 +19,9 @@ class BaseConfig {
         import std.stdio;
 
         if (!node.empty) {
-            debug {
-                import std.stdio;
-
-                stderr.writeln("[DEBUG] Warning: Found unknown keys in ", node.startMark.name, ":");
-                foreach (key; node.mappingKeys!string) {
-                    stderr.writeln("\t", key);
-                }
-            } else {
-                static assert(0, "Figure out how to handle warnings");
+            dwriteln("Warning: Found unknown keys in ", node.startMark.name, ":");
+            foreach (key; node.mappingKeys!string) {
+                dwriteln("\t", key);
             }
         }
     }

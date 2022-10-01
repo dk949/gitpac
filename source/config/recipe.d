@@ -162,42 +162,17 @@ struct Recipes {
                     return s.length > 1 ? s[1] == b : false;
                 })(name, &single)) {
                 if (single) {
-                    debug {
-                        import std.stdio;
-
-                        writeln("[DEBUG] Warning: owner not specified,",
-                            " found 1 package with specified owner and matching name");
-                    } else {
-                        assert(false, "not implemented for release");
-                    }
+                    dwriteln("Warning: owner not specified, found 1 package with specified owner and matching name");
                     if (name == found.name) {
-                        debug {
-                            import std.stdio;
-
-                            writeln("\tname specified in recipe matches fully.");
-                        } else {
-                            assert(false, "not implemented for release");
-                        }
+                        dwriteln("\tname specified in recipe matches fully.");
                         return found;
                     } else {
-                        debug {
-                            import std.stdio;
-
-                            writeln("[DEBUG] Prompt: Use package `", found.name, "`? (y/N)");
-                            return found;
-                        } else {
-                            assert(false, "not implemented for release");
-                        }
+                        dwriteln("Prompt: Use package `", found.name, "`? (y/N)");
+                        return found;
                     }
                 } else {
-                    debug {
-                        import std.stdio;
-
-                        writeln("[DEBUG] Prompt: package available from different owners");
-                        assert(false, "not implemented");
-                    } else {
-                        assert(false, "not implemented for release");
-                    }
+                    dwriteln("Prompt: package available from different owners");
+                    assert(false, "not implemented");
                 }
             }
 
