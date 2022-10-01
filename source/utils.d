@@ -182,3 +182,10 @@ debug {
     }
 }
 
+void notImplemented(string msg = null) {
+    assert(0, "Not implemented" ~ (msg ? " " ~ msg : ""));
+}
+
+void unreachable(string msg = null) {
+    assert(0, "Unreachable" ~ (msg ? " " ~ msg : ""));
+}
