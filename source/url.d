@@ -59,6 +59,29 @@ struct Url {
 
     alias url this;
 
+    bool opEquals(U)(auto ref const U u) const
+    if (is(U == Url) || is(U == typeof(url))) {
+        alias eq = match!(
+            (DefaultUrl a, DefaultUrl b) => a == b,
+            (string a, string b) => a == b,
+            (a, b) => false
+        );
+        return eq(url, u);
+    }
+
+    bool opEquals(U)(auto ref const U u) const
+    if (is(U == DefaultUrl) || is(U == string)) {
+        return std.sumtype.match!(
+            (U a) => u == a,
+            (_) => false,
+        )(url);
+    }
+
+    size_t toHash() const @safe pure nothrow {
+        size_t hash;
+        return hash;
+    }
+
     void opAssign(T)(T val)
     if (is(T == DefaultUrl) || is(T == string)) {
         url = val;
